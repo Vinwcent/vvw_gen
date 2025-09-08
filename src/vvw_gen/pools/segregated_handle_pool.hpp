@@ -25,6 +25,10 @@ class SegregatedHandlePool {
     mapping_.erase(allocationKey);
   }
   bool isAllocated(T allocationKey) { return mapping_.contains(allocationKey); }
+  uint32_t get(T allocationKey) {
+    assert(isAllocated(allocationKey));
+    return mapping_[allocationKey];
+  }
 
  private:
   SegregatedFreeListAllocator allocator_;
