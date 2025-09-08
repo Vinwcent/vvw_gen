@@ -1,8 +1,6 @@
-#include "src/priority_event_queue.hpp"
-
 #include <gtest/gtest.h>
 
-#include "src/priority_event_queue_builder.hpp"
+#include <vvw_gen/vvw_gen.hpp>
 
 enum class DummyEvent { EVENT_1 };
 
@@ -10,19 +8,19 @@ TEST(PriorityEventQueueTest, construction) {
   int value = 1;
   std::function<void(int)> valueAdd(
       [&value](int increment) { value += increment; });
-  vvw_gen_lib::FunctionWrapper<int> wrapper(valueAdd);
+  vvw_gen::FunctionWrapper<int> wrapper(valueAdd);
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int>>(valueAdd);
+      std::make_unique<vvw_gen::FunctionWrapper<int>>(valueAdd);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
   EXPECT_NO_THROW({
-    auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+    auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
   });
 }
 
@@ -31,16 +29,16 @@ TEST(PriorityEventQueueTest, addEventTest) {
   std::function<void(int, int)> valueAffine(
       [&value](int a, int b) { value = value * a + b; });
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int, int>>(valueAffine);
+      std::make_unique<vvw_gen::FunctionWrapper<int, int>>(valueAffine);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
-  auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+  auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
 
   queue.addEvent(DummyEvent::EVENT_1, 4, 1);
   queue.addEvent(DummyEvent::EVENT_1, 6, 1);
@@ -54,16 +52,16 @@ TEST(PriorityEventQueueTest, processEvent) {
   std::function<void(int, int)> valueAffine(
       [&value](int a, int b) { value = value * a + b; });
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int, int>>(valueAffine);
+      std::make_unique<vvw_gen::FunctionWrapper<int, int>>(valueAffine);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
-  auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+  auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
   queue.addEvent(DummyEvent::EVENT_1, 2, 3);
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_EQ(value, 5);
@@ -77,16 +75,16 @@ TEST(PriorityEventQueueTest, addEventAlterAndProcess) {
   std::function<void(int, int)> valueAffine(
       [&value](int a, int b) { value = value * a + b; });
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int, int>>(valueAffine);
+      std::make_unique<vvw_gen::FunctionWrapper<int, int>>(valueAffine);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
-  auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+  auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
   queue.setEventProcessing(false);
   queue.addEvent(DummyEvent::EVENT_1, 2, 3);
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -108,16 +106,16 @@ TEST(PriorityEventQueueTest, processEventWhileAdding) {
   std::function<void(int, int)> valueAffine(
       [&value](int a, int b) { value = value * a + b; });
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int, int>>(valueAffine);
+      std::make_unique<vvw_gen::FunctionWrapper<int, int>>(valueAffine);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
-  auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+  auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
   queue.addEvent(DummyEvent::EVENT_1, 2, 3);
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_EQ(value, 5);
@@ -132,16 +130,16 @@ TEST(PriorityEventQueueTest, addManyEventsLaunchAndAlter) {
   int value = 1;
   std::function<void(int)> valueAffine([&value](int a) { value = value + a; });
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int>>(valueAffine);
+      std::make_unique<vvw_gen::FunctionWrapper<int>>(valueAffine);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
-  auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+  auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
   queue.setEventProcessing(false);
   for (int i = 0; i < 10; ++i) {
     queue.addEvent(DummyEvent::EVENT_1, 1);
@@ -173,16 +171,16 @@ TEST(PriorityEventQueueTest, alterWhileProcessing) {
     value = value + a;
   });
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int>>(valueAffine);
+      std::make_unique<vvw_gen::FunctionWrapper<int>>(valueAffine);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
-  auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+  auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
   queue.addEvent(DummyEvent::EVENT_1, 1);
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_EQ(value, 1);
@@ -203,16 +201,16 @@ TEST(PriorityEventQueueTest, checkIsProcessing) {
     value = value + a;
   });
 
-  std::map<DummyEvent, std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::map<DummyEvent, std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper[DummyEvent::EVENT_1] =
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int>>(valueAffine);
+      std::make_unique<vvw_gen::FunctionWrapper<int>>(valueAffine);
 
-  vvw_gen_lib::PriorityEventQueueConfig<DummyEvent> config;
+  vvw_gen::PriorityEventQueueConfig<DummyEvent> config;
   config.eventPriorities = {{DummyEvent::EVENT_1, 0}};
   config.eventsFunctions = std::move(erasedTypeWrapper);
 
-  auto queue = vvw_gen_lib::PriorityEventQueue<DummyEvent>(std::move(config));
+  auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
   queue.addEvent(DummyEvent::EVENT_1, 1);
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_TRUE(queue.isProcessingAnEvent());
@@ -225,7 +223,7 @@ TEST(PriorityEventQueueBuilderTest, builder) {
   std::function<void(int, int)> valueAffine(
       [&value](int a, int b) { value = value * a + b; });
 
-  vvw_gen_lib::PriorityEventQueueBuilder<DummyEvent> builder{};
+  vvw_gen::PriorityEventQueueBuilder<DummyEvent> builder{};
   builder.registerEvent(DummyEvent::EVENT_1, 1, valueAffine);
 
   auto queue = builder.build();

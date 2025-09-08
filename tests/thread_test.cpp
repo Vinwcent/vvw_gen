@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "src/worker.hpp"
+#include <vvw_gen/vvw_gen.hpp>
 
 TEST(WorkerTest, usage) {
   int value = 1;
@@ -8,7 +8,7 @@ TEST(WorkerTest, usage) {
       [&value](auto &lock) { value += 1; });
   std::function<bool()> hasWorkToDo(
       [&value]() { return value > 1 && value < 10; });
-  vvw_gen_lib::Worker worker(increaseValue, hasWorkToDo);
+  vvw_gen::Worker worker(increaseValue, hasWorkToDo);
   EXPECT_EQ(value, 1);
   value += 1;
   EXPECT_EQ(value, 2);
@@ -24,7 +24,7 @@ TEST(WorkerTest, block) {
   std::function<bool()> hasWorkToDo(
       [&value]() { return value > 1 && value < 10; });
   std::mutex mtx;
-  vvw_gen_lib::Worker worker(increaseValue, hasWorkToDo);
+  vvw_gen::Worker worker(increaseValue, hasWorkToDo);
   EXPECT_EQ(value, 1);
   value += 1;
   EXPECT_EQ(value, 2);

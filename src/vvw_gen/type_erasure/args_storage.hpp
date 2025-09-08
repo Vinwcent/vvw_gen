@@ -4,7 +4,7 @@
 #include <functional>
 #include <vector>
 
-#include "src/macros.hpp"
+#include "vvw_gen/macros.hpp"
 
 BEGIN_VVW_GEN_LIB_NS
 

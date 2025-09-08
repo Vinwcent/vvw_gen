@@ -1,13 +1,13 @@
-#include "src/function_wrappers.hpp"
-
 #include <gtest/gtest.h>
+
+#include <vvw_gen/vvw_gen.hpp>
 
 TEST(FunctionWrapperTest, testUsage) {
   int value = 3;
 
   std::function<void(int)> valueAdd(
       [&value](int increment) { value += increment; });
-  vvw_gen_lib::FunctionWrapper<int> wrapper(valueAdd);
+  vvw_gen::FunctionWrapper<int> wrapper(valueAdd);
 
   int incr = 5;
   std::vector<void*> args{&incr};
@@ -20,12 +20,12 @@ TEST(FunctionWrapperTest, testUsageThroughEraser) {
 
   std::function<void(int)> valueAdd(
       [&value](int increment) { value += increment; });
-  vvw_gen_lib::FunctionWrapper<int> wrapper(valueAdd);
+  vvw_gen::FunctionWrapper<int> wrapper(valueAdd);
 
-  std::vector<std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  std::vector<std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrapper;
   erasedTypeWrapper.push_back(
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int>>(valueAdd));
+      std::make_unique<vvw_gen::FunctionWrapper<int>>(valueAdd));
 
   int incr = 4;
   std::vector<void*> args{&incr};
@@ -41,13 +41,13 @@ TEST(FunctionWrapperTest, testVectorUsageWithEraser) {
   std::function<void(int)> valueSub(
       [&value](int decrement) { value -= decrement; });
 
-  vvw_gen_lib::FunctionWrapper<int> wrapper(valueAdd);
-  std::vector<std::unique_ptr<vvw_gen_lib::FunctionWrapperTypeEraser>>
+  vvw_gen::FunctionWrapper<int> wrapper(valueAdd);
+  std::vector<std::unique_ptr<vvw_gen::FunctionWrapperTypeEraser>>
       erasedTypeWrappers;
   erasedTypeWrappers.push_back(
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int>>(valueAdd));
+      std::make_unique<vvw_gen::FunctionWrapper<int>>(valueAdd));
   erasedTypeWrappers.push_back(
-      std::make_unique<vvw_gen_lib::FunctionWrapper<int>>(valueSub));
+      std::make_unique<vvw_gen::FunctionWrapper<int>>(valueSub));
 
   int incr = 5;
   int decr = 3;
