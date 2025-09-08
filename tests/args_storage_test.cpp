@@ -1,8 +1,6 @@
-#include "src/args_storage.hpp"
-
 #include <gtest/gtest.h>
 
-#include "src/function_wrappers.hpp"
+#include <vvw_gen/vvw_gen.hpp>
 
 TEST(ArgsStorageTest, construction) {
   vvw_gen_lib::ArgsStorage<int, int> storage(5, 4);

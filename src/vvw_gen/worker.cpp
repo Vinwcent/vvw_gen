@@ -1,4 +1,4 @@
-#include "src/worker.hpp"
+#include "worker.hpp"
 
 BEGIN_VVW_GEN_LIB_NS
 

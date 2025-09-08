@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "src/worker.hpp"
+#include <vvw_gen/vvw_gen.hpp>
 
 TEST(WorkerTest, usage) {
   int value = 1;

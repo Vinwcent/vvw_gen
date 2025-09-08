@@ -3,40 +3,27 @@ project(CMakeProject)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_BUILD_TYPE Debug)
-find_package(GTest REQUIRED)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 # Lib
-set(GEN_LIB_FILES)
-list(APPEND GEN_LIB_FILES
-	src/priority_event_queue.hpp
-	src/function_wrappers.hpp
-	src/args_storage.hpp
-	src/worker.hpp
-	src/worker.cpp
+include(sources.cmake)
+set(VVW_GEN_LIBRARY_NAME vvw_gen)
+add_library(${VVW_GEN_LIBRARY_NAME} ${VVW_GEN_FILES})
+add_library(vvw_gen::vvw_gen ALIAS ${VVW_GEN_LIBRARY_NAME})
+target_include_directories(${VVW_GEN_LIBRARY_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(vvw_gen_INCLUDE_DIRS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src 
+    ${vvw_gen_INCLUDE_DIRS} 
 )
-add_library(GenLib ${GEN_LIB_FILES})
-target_include_directories(GenLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set(vvw_gen_INCLUDE_DIRS ${vvw_gen_INCLUDE_DIRS} PARENT_SCOPE)
 
 
-# Tests
-enable_testing()
-include(GoogleTest)
-set(TESTS_FILES)
-list(APPEND TESTS_FILES
-	tests/priority_event_queue_test.cpp
-	tests/function_wrappers_test.cpp
-	tests/args_storage_test.cpp
-	tests/thread_test.cpp
-)
-
-set(TESTS_EXECUTABLE tests)
-add_executable(${TESTS_EXECUTABLE} ${TESTS_FILES})
-target_include_directories(${TESTS_EXECUTABLE} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-	${GTEST_INCLUDE_DIRS})
-target_link_libraries(${TESTS_EXECUTABLE} GenLib GTest::gtest_main GTest::gtest)
-gtest_discover_tests(
-	${TESTS_EXECUTABLE}
-)
+option(BUILD_TESTS OFF "Build test suite")
+if (BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

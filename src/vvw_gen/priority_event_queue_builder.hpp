@@ -1,9 +1,9 @@
 #ifndef VVW_PRIORITY_EVENT_QUEUE_BUILDER_HPP
 #define VVW_PRIORITY_EVENT_QUEUE_BUILDER_HPP
 
-#include "src/function_wrappers.hpp"
-#include "src/macros.hpp"
-#include "src/priority_event_queue.hpp"
+#include "priority_event_queue.hpp"
+#include "vvw_gen/macros.hpp"
+#include "vvw_gen/type_erasure/function_wrappers.hpp"
 
 BEGIN_VVW_GEN_LIB_NS
 

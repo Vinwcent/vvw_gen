@@ -6,10 +6,10 @@
 #include <mutex>
 #include <set>
 
-#include "macros.hpp"
-#include "src/args_storage.hpp"
-#include "src/function_wrappers.hpp"
-#include "src/worker.hpp"
+#include "vvw_gen/macros.hpp"
+#include "vvw_gen/type_erasure/args_storage.hpp"
+#include "vvw_gen/type_erasure/function_wrappers.hpp"
+#include "vvw_gen/worker.hpp"
 
 BEGIN_VVW_GEN_LIB_NS
 

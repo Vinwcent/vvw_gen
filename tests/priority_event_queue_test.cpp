@@ -1,8 +1,6 @@
-#include "src/priority_event_queue.hpp"
-
 #include <gtest/gtest.h>
 
-#include "src/priority_event_queue_builder.hpp"
+#include <vvw_gen/vvw_gen.hpp>
 
 enum class DummyEvent { EVENT_1 };
 

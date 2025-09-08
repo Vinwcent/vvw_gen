@@ -1,6 +1,6 @@
-#include "src/function_wrappers.hpp"
-
 #include <gtest/gtest.h>
+
+#include <vvw_gen/vvw_gen.hpp>
 
 TEST(FunctionWrapperTest, testUsage) {
   int value = 3;
