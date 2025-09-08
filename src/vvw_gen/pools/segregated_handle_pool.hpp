@@ -5,7 +5,8 @@
 
 #include "segregated_free_list_allocator.hpp"
 BEGIN_VVW_GEN_LIB_NS
-template <typename T, typename HashingFunctor = std::hash<T>>
+template <typename T, typename HashingFunctor = std::hash<T>,
+          typename EqualFunctor = std::equal_to<T>>
 class SegregatedHandlePool {
  public:
   SegregatedHandlePool(uint32_t poolSize) : allocator_(poolSize) {}
@@ -32,7 +33,7 @@ class SegregatedHandlePool {
 
  private:
   SegregatedFreeListAllocator allocator_;
-  std::unordered_map<T, uint32_t, HashingFunctor> mapping_;
+  std::unordered_map<T, uint32_t, HashingFunctor, EqualFunctor> mapping_;
 };
 END_VVW_GEN_LIB_NS
 #endif
