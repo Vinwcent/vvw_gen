@@ -8,6 +8,7 @@ list(APPEND TESTS_FILES
 	function_wrappers_test.cpp
 	args_storage_test.cpp
 	thread_test.cpp
+	segregated_handle_pool_test.cpp
 )
 
 set(TESTS_EXECUTABLE tests)
