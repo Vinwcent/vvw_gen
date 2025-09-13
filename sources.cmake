@@ -14,6 +14,7 @@ list(APPEND VVW_GEN_HEADERS
 	src/vvw_gen/type_erasure/function_wrappers.hpp
 	src/vvw_gen/pools/bitset_allocator.hpp
 	src/vvw_gen/pools/segregated_free_list_allocator.hpp
+	src/vvw_gen/inputs/inputs_processor.hpp
 )
 
 set(VVW_GEN_FILES ${VVW_GEN_SOURCES} ${VVW_GEN_HEADERS})

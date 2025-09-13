@@ -23,7 +23,7 @@ set(vvw_gen_INCLUDE_DIRS
 set(vvw_gen_INCLUDE_DIRS ${vvw_gen_INCLUDE_DIRS} PARENT_SCOPE)
 
 
-option(BUILD_TESTS OFF "Build test suite")
-if (BUILD_TESTS)
+option(BUILD_VVW_TESTS OFF "Build test suite")
+if (BUILD_VVW_TESTS)
 	add_subdirectory(tests)
 endif()

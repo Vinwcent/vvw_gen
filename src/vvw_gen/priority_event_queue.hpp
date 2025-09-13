@@ -6,6 +6,7 @@
 #include <mutex>
 #include <set>
 
+#include "concepts.hpp"
 #include "vvw_gen/macros.hpp"
 #include "vvw_gen/type_erasure/args_storage.hpp"
 #include "vvw_gen/type_erasure/function_wrappers.hpp"
@@ -13,10 +14,7 @@
 
 BEGIN_VVW_GEN_LIB_NS
 
-template <typename T>
-concept EnumClass = std::is_enum_v<T> && !std::is_convertible_v<T, int>;
-
-template <EnumClass Event>
+template <EnumType Event>
 struct PriorityEventQueueConfig {
   std::map<Event, int> eventPriorities{};
   std::map<Event, std::unique_ptr<FunctionWrapperTypeEraser>> eventsFunctions{};
@@ -27,7 +25,7 @@ struct PriorityEventQueueConfig {
   }
 };
 
-template <EnumClass Event>
+template <EnumType Event>
 class PriorityEventQueue {
  public:
   PriorityEventQueue(PriorityEventQueueConfig<Event>&& config)

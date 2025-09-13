@@ -7,7 +7,7 @@
 
 BEGIN_VVW_GEN_LIB_NS
 
-template <EnumClass Event>
+template <EnumType Event>
 class PriorityEventQueueBuilder {
  public:
   template <typename... Args>

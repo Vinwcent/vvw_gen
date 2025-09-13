@@ -1,6 +1,8 @@
 #ifndef VVW_VVW_GEN_HPP
 #define VVW_VVW_GEN_HPP
 
+#include "vvw_gen/inputs/inputs_processor.hpp"
+#include "vvw_gen/inputs/raw_inputs.hpp"
 #include "vvw_gen/pools/bitset_allocator.hpp"
 #include "vvw_gen/pools/segregated_free_list_allocator.hpp"
 #include "vvw_gen/pools/segregated_handle_pool.hpp"
