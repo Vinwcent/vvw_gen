@@ -40,8 +40,10 @@ class InputsProcessor {
   }
 
   Inputs<T> operator()(RawInputs rawInputs) {
-    Inputs<T> inputs{.cursorData = rawInputs.cursorData,
-                     .scrollData = rawInputs.scrollData};
+    Inputs<T> inputs;
+    inputs.cursorData = rawInputs.cursorData;
+    inputs.scrollData = rawInputs.scrollData;
+
     for (auto &[keyCode, input] : keyCodeToInput_) {
       if (rawInputs.pressedKeyCodes.contains(keyCode)) {
         processPressedKey(inputs, input, keyCode);
