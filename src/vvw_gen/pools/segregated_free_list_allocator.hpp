@@ -13,9 +13,14 @@ class SegregatedFreeListAllocator {
   std::optional<uint32_t> allocate(uint32_t nConsecutiveAllocations);
   void deallocate(uint32_t index, uint32_t nConsecutiveAllocations);
 
+  uint32_t getNAllocations() const;
+
  private:
   uint32_t head_ = 0;
+  // The pool size is purely virtual to have an idea of what we can support
   uint32_t poolSize_;
+
+  uint32_t nAllocs_ = 0;
   std::map<uint32_t, std::queue<uint32_t>> nConsecsAllocToIndex_;
   void addFreeAlloc_(uint32_t nConsecutiveAllocations, uint32_t index);
   uint32_t removeFreeAlloc_(uint32_t nConsecutiveAllocations);

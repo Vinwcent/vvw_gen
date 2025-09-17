@@ -14,11 +14,16 @@ std::optional<uint32_t> SegregatedFreeListAllocator::allocate(
   if (outputIndex >= poolSize_) {
     return std::nullopt;
   }
+  nAllocs_ += nConsecutiveAllocations;
   return outputIndex;
 }
 void SegregatedFreeListAllocator::deallocate(uint32_t index,
                                              uint32_t nConsecutiveAllocations) {
   addFreeAlloc_(nConsecutiveAllocations, index);
+}
+
+uint32_t SegregatedFreeListAllocator::getNAllocations() const {
+  return nAllocs_;
 }
 
 void SegregatedFreeListAllocator::addFreeAlloc_(
@@ -28,6 +33,7 @@ void SegregatedFreeListAllocator::addFreeAlloc_(
   }
   auto &allocQueue = nConsecsAllocToIndex_[nConsecutiveAllocations];
   allocQueue.push(index);
+  nAllocs_ -= nConsecutiveAllocations;
 }
 
 uint32_t SegregatedFreeListAllocator::removeFreeAlloc_(
@@ -39,6 +45,7 @@ uint32_t SegregatedFreeListAllocator::removeFreeAlloc_(
   if (allocQueue.empty()) {
     nConsecsAllocToIndex_.erase(nConsecutiveAllocations);
   }
+  nAllocs_ += nConsecutiveAllocations;
   return index;
 }
 END_VVW_GEN_LIB_NS
