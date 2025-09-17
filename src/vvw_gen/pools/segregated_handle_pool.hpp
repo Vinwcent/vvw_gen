@@ -31,6 +31,8 @@ class SegregatedHandlePool {
     return mapping_[allocationKey];
   }
 
+  uint32_t getNAllocations() const { return allocator_.getNAllocations(); }
+
  private:
   SegregatedFreeListAllocator allocator_;
   std::unordered_map<T, uint32_t, HashingFunctor, EqualFunctor> mapping_;
