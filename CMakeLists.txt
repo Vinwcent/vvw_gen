@@ -15,6 +15,7 @@ set(VVW_GEN_LIBRARY_NAME vvw_gen)
 add_library(${VVW_GEN_LIBRARY_NAME} ${VVW_GEN_FILES})
 add_library(vvw_gen::vvw_gen ALIAS ${VVW_GEN_LIBRARY_NAME})
 target_include_directories(${VVW_GEN_LIBRARY_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set_target_properties(${VVW_GEN_LIBRARY_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 set(vvw_gen_INCLUDE_DIRS 
     ${CMAKE_CURRENT_SOURCE_DIR}/src 
