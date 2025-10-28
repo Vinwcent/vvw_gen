@@ -1,8 +1,8 @@
 #ifndef VVW_INPUTS_PROCESSOR_HPP
 #define VVW_INPUTS_PROCESSOR_HPP
-
 #include <map>
 #include <set>
+#include <vector>
 #include <vvw_gen/concepts.hpp>
 
 #include "raw_inputs.hpp"
@@ -16,12 +16,21 @@ template <EnumType T>
 struct Inputs {
   CursorData cursorData;
   ScrollData scrollData;
-  bool operator()(T input) const { return activeInputs_.contains(input); }
+
+  bool operator()(T input, InputType type) const {
+    if (type == InputType::TOGGLE) {
+      return activeToggleInputs_.contains(input);
+    } else {
+      return activeContinuousInputs_.contains(input);
+    }
+  }
 
  private:
-  std::set<T> activeInputs_{};
+  std::set<T> activeToggleInputs_{};
+  std::set<T> activeContinuousInputs_{};
 
-  void setActive(T input) { activeInputs_.insert(input); }
+  void setActiveToggle(T input) { activeToggleInputs_.insert(input); }
+  void setActiveContinuous(T input) { activeContinuousInputs_.insert(input); }
 
   friend class InputsProcessor<T>;
 };
@@ -32,9 +41,14 @@ class InputsProcessor {
   InputsProcessor(std::map<T, InputDefinition> inputDefs) {
     for (auto [input, def] : inputDefs) {
       keyCodeToInput_.emplace(def.keyCode, input);
-      if (def.type == InputType::TOGGLE) {
-        toggleKeys_.insert(input);
-        toggleKeyShouldToggle_.emplace(input, true);
+
+      for (InputType type : def.types) {
+        if (type == InputType::TOGGLE) {
+          toggleKeys_.insert(input);
+          toggleKeyShouldToggle_.emplace(input, true);
+        } else if (type == InputType::CONTINUOUS) {
+          continuousKeys_.insert(input);
+        }
       }
     }
   }
@@ -49,6 +63,7 @@ class InputsProcessor {
         processPressedKey(inputs, input, keyCode);
       }
     }
+
     std::erase_if(toggleKeyCodesToCheck_, [&](int keyCode) {
       if (!rawInputs.pressedKeyCodes.contains(keyCode)) {
         T input = keyCodeToInput_[keyCode];
@@ -57,36 +72,31 @@ class InputsProcessor {
       }
       return false;
     });
+
     return inputs;
   }
 
  private:
   std::map<int, T> keyCodeToInput_{};
-
   std::set<T> toggleKeys_{};
-  // The toggle keys we need to check to know if we should listen again or not
+  std::set<T> continuousKeys_{};
   std::set<int> toggleKeyCodesToCheck_{};
   std::map<T, bool> toggleKeyShouldToggle_{};
 
   void processPressedKey(Inputs<T> &inputs, T input, int keyCode) {
-    // Continuous first
-    if (!toggleKeys_.contains(input)) {
-      inputs.setActive(input);
-      return;
+    // Continuous - seulement si configuré
+    if (continuousKeys_.contains(input)) {
+      inputs.setActiveContinuous(input);
     }
 
-    // Toggle check then
-    if (!toggleKeyShouldToggle_[input]) {
-      return;
+    // Toggle - seulement si configuré
+    if (toggleKeys_.contains(input) && toggleKeyShouldToggle_[input]) {
+      inputs.setActiveToggle(input);
+      toggleKeyCodesToCheck_.insert(keyCode);
+      toggleKeyShouldToggle_[input] = false;
     }
-
-    // Here we need to toggle and deactivate toggling
-    inputs.setActive(input);
-    toggleKeyCodesToCheck_.insert(keyCode);
-    toggleKeyShouldToggle_[input] = false;
   }
 };
 
 END_VVW_GEN_LIB_NS
-
 #endif

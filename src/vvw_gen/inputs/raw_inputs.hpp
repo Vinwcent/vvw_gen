@@ -15,8 +15,8 @@ struct CursorData {
 };
 
 struct ScrollData {
-  double offsetX;
-  double offsetY;
+  bool scrollForward;
+  bool scrollBackward;
 };
 
 struct RawInputs {
@@ -29,7 +29,7 @@ enum class InputType { CONTINUOUS, TOGGLE };
 
 struct InputDefinition {
   int keyCode;
-  InputType type;
+  std::vector<InputType> types{};
 };
 
 END_VVW_GEN_LIB_NS
