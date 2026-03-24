@@ -3,6 +3,10 @@
 #include <cassert>
 #include <stdexcept>
 
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
+
 #include "vvw_gen/pools/bucket_allocation_info.hpp"
 
 constexpr uint32_t N_BITS_IN_UINT = 32;
@@ -62,11 +66,11 @@ uint32_t BitSetAllocator::getFirstFreeBitPos_(uint32_t bucketIndex) {
 
 #elif defined(_MSC_VER)
   unsigned long index;
-  _BitScanForward(&index, ~pool_[packIndex]);
+  _BitScanForward(&index, ~pool_[bucketIndex]);
   return index;
 
 #else
-  uint32_t v = ~pool_[packIndex];
+  uint32_t v = ~pool_[bucketIndex];
   static constexpr uint32_t debruijn = 0x03f566f7U;
   static constexpr uint8_t table[32] = {
       0,  1,  12, 2,  13, 22, 17, 3,  14, 33, 23, 36, 18, 58, 28, 4,
