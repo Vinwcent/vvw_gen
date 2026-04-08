@@ -1,6 +1,7 @@
 #ifndef VVW_RAW_INPUTS_HPP
 #define VVW_RAW_INPUTS_HPP
 
+#include <optional>
 #include <set>
 
 #include "vvw_gen/macros.hpp"
@@ -21,6 +22,7 @@ struct ScrollData {
 
 struct RawInputs {
   std::set<int> pressedKeyCodes;
+  std::optional<int> lastPressedKeyboardKeyCode;
   CursorData cursorData;
   ScrollData scrollData;
 };

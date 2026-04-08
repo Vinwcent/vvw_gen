@@ -1,6 +1,7 @@
 #ifndef VVW_INPUTS_PROCESSOR_HPP
 #define VVW_INPUTS_PROCESSOR_HPP
 #include <map>
+#include <optional>
 #include <set>
 #include <vector>
 #include <vvw_gen/concepts.hpp>
@@ -9,11 +10,9 @@
 
 BEGIN_VVW_GEN_LIB_NS
 
-template <EnumType T>
-class InputsProcessor;
+template <EnumType T> class InputsProcessor;
 
-template <EnumType T>
-struct Inputs {
+template <EnumType T> struct Inputs {
   CursorData cursorData;
   ScrollData scrollData;
 
@@ -25,7 +24,7 @@ struct Inputs {
     }
   }
 
- private:
+private:
   std::set<T> activeToggleInputs_{};
   std::set<T> activeContinuousInputs_{};
 
@@ -35,9 +34,8 @@ struct Inputs {
   friend class InputsProcessor<T>;
 };
 
-template <EnumType T>
-class InputsProcessor {
- public:
+template <EnumType T> class InputsProcessor {
+public:
   InputsProcessor(std::map<T, InputDefinition> inputDefs) {
     for (auto [input, def] : inputDefs) {
       keyCodeToInput_.emplace(def.keyCode, input);
@@ -55,6 +53,7 @@ class InputsProcessor {
 
   Inputs<T> operator()(RawInputs rawInputs) {
     Inputs<T> inputs;
+    lastPressedKeyboardKeyCode_ = rawInputs.lastPressedKeyboardKeyCode;
     inputs.cursorData = rawInputs.cursorData;
     inputs.scrollData = rawInputs.scrollData;
 
@@ -76,12 +75,17 @@ class InputsProcessor {
     return inputs;
   }
 
- private:
+  std::optional<int> getLastPressedKeyboardKeyCode() const {
+    return lastPressedKeyboardKeyCode_;
+  }
+
+private:
   std::map<int, T> keyCodeToInput_{};
   std::set<T> toggleKeys_{};
   std::set<T> continuousKeys_{};
   std::set<int> toggleKeyCodesToCheck_{};
   std::map<T, bool> toggleKeyShouldToggle_{};
+  std::optional<int> lastPressedKeyboardKeyCode_{};
 
   void processPressedKey(Inputs<T> &inputs, T input, int keyCode) {
     // Continuous - seulement si configuré
