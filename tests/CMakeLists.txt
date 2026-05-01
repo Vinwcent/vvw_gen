@@ -7,6 +7,7 @@ list(APPEND TESTS_FILES
 	priority_event_queue_test.cpp
 	function_wrappers_test.cpp
 	args_storage_test.cpp
+	observer_notifier_test.cpp
 	thread_test.cpp
 	segregated_handle_pool_test.cpp
 )

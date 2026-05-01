@@ -10,6 +10,10 @@ list(APPEND VVW_GEN_HEADERS
 	src/vvw_gen/worker.hpp
 	src/vvw_gen/priority_event_queue.hpp
 	src/vvw_gen/priority_event_queue_builder.hpp
+	src/vvw_gen/observer_notifier/enum_concepts.hpp
+	src/vvw_gen/observer_notifier/notifier.hpp
+	src/vvw_gen/observer_notifier/observer.hpp
+	src/vvw_gen/observer_notifier/observer_notifier_payload_trait.hpp
 	src/vvw_gen/type_erasure/args_storage.hpp
 	src/vvw_gen/type_erasure/function_wrappers.hpp
 	src/vvw_gen/pools/bitset_allocator.hpp
