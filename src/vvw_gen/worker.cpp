@@ -14,7 +14,10 @@ std::mutex &Worker::getMutex() { return workMutex_; }
 Worker::~Worker() { shutdown(); }
 
 void Worker::shutdown() {
-  isActive_ = false;
+  {
+    std::lock_guard<std::mutex> lock(workMutex_);
+    isActive_ = false;
+  }
   cv_.notify_one();
   if (workerThread_.joinable()) {
     workerThread_.join();
@@ -22,7 +25,10 @@ void Worker::shutdown() {
 }
 
 void Worker::setBlock(bool isBlocked) {
-  isBlocked_ = isBlocked;
+  {
+    std::lock_guard<std::mutex> lock(workMutex_);
+    isBlocked_ = isBlocked;
+  }
   cv_.notify_one();
 }
 

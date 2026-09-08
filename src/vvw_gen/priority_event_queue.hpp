@@ -36,6 +36,7 @@ class PriorityEventQueue {
             [this]() { return this->hasEventsToProcess_(); })
 
   {
+    std::lock_guard<std::mutex> lock(worker.getMutex());
     checkValidity_(config);
     initOrderedEvents_(config.eventPriorities);
     eventsFunctions_ = std::move(config.eventsFunctions);

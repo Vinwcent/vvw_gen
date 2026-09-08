@@ -1,5 +1,10 @@
 #include <gtest/gtest.h>
 
+#include <array>
+#include <chrono>
+#include <future>
+#include <stdexcept>
+
 #include <vvw_gen/vvw_gen.hpp>
 
 enum class DummyEvent { EVENT_1 };
@@ -40,6 +45,7 @@ TEST(PriorityEventQueueTest, addEventTest) {
 
   auto queue = vvw_gen::PriorityEventQueue<DummyEvent>(std::move(config));
 
+  queue.setEventProcessing(false);
   queue.addEvent(DummyEvent::EVENT_1, 4, 1);
   queue.addEvent(DummyEvent::EVENT_1, 6, 1);
   queue.addEvent(DummyEvent::EVENT_1, 8, 1);
@@ -232,3 +238,56 @@ TEST(PriorityEventQueueBuilderTest, builder) {
   EXPECT_EQ(value, 5);
 }
 
+TEST(PriorityEventQueueLifecycleTest, repeatedMultiEventStartupAndDestruction) {
+  enum class Event { FIRST, SECOND, THIRD };
+
+  for (int iteration = 0; iteration < 50; ++iteration) {
+    SCOPED_TRACE(iteration);
+    std::array<int, 3> totals{};
+    int processed = 0;
+    std::promise<void> completed;
+    auto completion = completed.get_future();
+    vvw_gen::PriorityEventQueueConfig<Event> config;
+    config.eventPriorities = {
+        {Event::FIRST, 0}, {Event::SECOND, 1}, {Event::THIRD, 2}};
+    for (const auto& [event, priority] : config.eventPriorities) {
+      config.eventsFunctions[event] =
+          std::make_unique<vvw_gen::FunctionWrapper<int>>([&, event](int value) {
+            totals[static_cast<int>(event)] += value;
+            if (++processed == 6) {
+              completed.set_value();
+            }
+          });
+    }
+
+    auto status = std::future_status::timeout;
+    {
+      vvw_gen::PriorityEventQueue<Event> queue(std::move(config));
+      for (int value = 1; value <= 2; ++value) {
+        queue.addEvent(Event::FIRST, value);
+        queue.addEvent(Event::SECOND, value);
+        queue.addEvent(Event::THIRD, value);
+      }
+      status = completion.wait_for(std::chrono::seconds(5));
+    }
+
+    // Destruction joins the worker before observations or assertion failures.
+    ASSERT_EQ(status, std::future_status::ready);
+    EXPECT_EQ(processed, 6);
+    EXPECT_EQ(totals, (std::array<int, 3>{3, 3, 3}));
+  }
+}
+
+TEST(PriorityEventQueueLifecycleTest, duplicatePriorityThrowsSafely) {
+  enum class Event { FIRST, SECOND };
+
+  for (int iteration = 0; iteration < 50; ++iteration) {
+    SCOPED_TRACE(iteration);
+    vvw_gen::PriorityEventQueueConfig<Event> config;
+    config.eventPriorities = {{Event::FIRST, 1}, {Event::SECOND, 1}};
+
+    EXPECT_THROW(
+        { vvw_gen::PriorityEventQueue<Event> queue(std::move(config)); },
+        std::invalid_argument);
+  }
+}

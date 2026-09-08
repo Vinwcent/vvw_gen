@@ -1,6 +1,7 @@
 #ifndef VVW_WORKER_HPP
 #define VVW_WORKER_HPP
 
+#include <atomic>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
@@ -16,17 +17,18 @@ class Worker {
          std::function<bool()> hasWorkToDo);
   ~Worker();
 
+  // Call without holding getMutex().
   void setBlock(bool isBlocked);
   void notifyWorkWasAdded();
 
   std::mutex &getMutex();
 
+  // Serialize calls; call outside the worker thread, without holding getMutex().
   void shutdown();
 
   bool isWorking();
 
  private:
-  std::thread workerThread_;
   std::atomic<bool> isActive_ = true;
   std::atomic<bool> isBlocked_ = false;
   std::atomic<bool> isWorking_ = false;
@@ -35,6 +37,9 @@ class Worker {
   std::function<void(std::unique_lock<std::mutex> &lock)> threadFunction_;
   std::function<bool()> hasWorkToDo_;
   std::mutex workMutex_;
+
+  // Starting the thread publishes all preceding members to threadLoop_.
+  std::thread workerThread_;
 
   void threadLoop_();
 };
